@@ -12,11 +12,38 @@ namespace FixHomoglyphs
     {
         static void Main(string[] args)
         {
-            //This needs work. 
-            var FilePath = (Console.ReadLine());
-            var EditedFile = (@"C:\Homoglyphs\names-result.txt");
+            string backslash = @"\";
+            var EditFileName = @"names-result.txt";
+            string value = Console.ReadLine();
+            string[] array = new string[] {};
+            
+             array = value.Split(' ');
+             var FilePath = (array[0]);
 
-            using (var fixedFile = new StreamWriter($"{EditedFile}"))
+            //This is necessary if the user doesn't do a space after dragging a file in command prompt
+            //Otherwise it causes an index out of exception
+            if(array.Length == 1)
+            {
+                Array.Resize(ref array, array.Length + 1);
+                array[1] = "";
+            }
+            
+            var EditedFile = (array[1]);
+            //If the user does a space and its empty, or if whats right above happens.
+            //This would grab the directory that the file is being used to change
+            //the homoglyphs to normal characters.
+            if (array[1] == "")
+            {
+                EditedFile = "" + Path.GetDirectoryName(FilePath);
+            }
+            //This is necessary if you decide to have the edited file be created in C:\
+            //Otherwise when placed in a folder there isn't a backslash.
+            if (!EditedFile.EndsWith(backslash))
+            {
+                EditedFile += @"\";
+            }
+
+            using (var fixedFile = new StreamWriter($"{EditedFile}" + $"{EditFileName}"))
             {
                 List<string> records = File.ReadAllLines($"{FilePath}", Encoding.GetEncoding(1252)).ToList();
                 Decipher name = new Decipher();
